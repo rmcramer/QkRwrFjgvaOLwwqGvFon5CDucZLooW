@@ -62,29 +62,31 @@ class Hand {
     if ($sameSuit) $cards = $this->sortBySuit();
     else $cards = $this->sortByValue();
 
-    $lastValue = $cards[0]->getProps()['value'];
-    $lastSuit = $cards[0]->getProps()['suit'];
-    $numInARow = 1;
-    $cardIdx = 1;
+    if (count($cards)) {
+      $lastValue = $cards[0]->getProps()['value'];
+      $lastSuit = $cards[0]->getProps()['suit'];
+      $numInARow = 1;
+      $cardIdx = 1;
 
-    while ($cardIdx < count($cards)) {
-      $thisValue = $cards[$cardIdx]->getProps()['value'];
-      $thisSuit = $cards[$cardIdx]->getProps()['suit'];
+      while ($cardIdx < count($cards)) {
+        $thisValue = $cards[$cardIdx]->getProps()['value'];
+        $thisSuit = $cards[$cardIdx]->getProps()['suit'];
 
-      if (($lastValue + 1) == $thisValue &&
-          (!$sameSuit || ($sameSuit && $lastSuit == $thisSuit))) {
-        // found the next card in a straight series, so increment the series length
-        $numInARow++;
-      } else if ($sameSuit || (!$sameSuit && $lastValue != $thisValue)) {
-        // reset the hand's straight series length to 1 card found in a straight
-        $numInARow = 1;
+        if (($lastValue + 1) == $thisValue &&
+            (!$sameSuit || ($sameSuit && $lastSuit == $thisSuit))) {
+          // found the next card in a straight series, so increment the series length
+          $numInARow++;
+        } else if ($sameSuit || (!$sameSuit && $lastValue != $thisValue)) {
+          // reset the hand's straight series length to 1 card found in a straight
+          $numInARow = 1;
+        }
+
+        if ($numInARow == $len) return true;
+
+        $lastValue = $thisValue;
+        $lastSuit = $thisSuit;
+        $cardIdx++;
       }
-
-      if ($numInARow == $len) return true;
-
-      $lastValue = $thisValue;
-      $lastSuit = $thisSuit;
-      $cardIdx++;
     }
 
     return false;
